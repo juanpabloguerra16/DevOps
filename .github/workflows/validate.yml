@@ -43,5 +43,5 @@ jobs:
         with:
          inlineScript: |
           #!/bin/bash
-          az deployment sub validate --name ${{ env.RESOURCES_PREFIX }} --template-file main.bicep --location ${{ secrets.LOCATION }} --parameters resourcesPrefix=${{ env.RESOURCES_PREFIX }}
+          az deployment sub validate --name ${{ env.RESOURCES_PREFIX }} --template-file iac/bicep/main.bicep --location ${{ secrets.LOCATION }} --parameters resourcesPrefix=${{ env.RESOURCES_PREFIX }}
       
