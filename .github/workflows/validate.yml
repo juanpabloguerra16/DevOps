@@ -41,7 +41,7 @@ jobs:
       - name: validate
         uses: Azure/CLI@v1
         with:
+         azcliversion: 2.30.0
          inlineScript: |
           #!/bin/bash
           az deployment sub validate --name ${{ env.RESOURCES_PREFIX }} --template-file iac/bicep/main.bicep --location ${{ secrets.LOCATION }} --parameters resourcesPrefix=${{ env.RESOURCES_PREFIX }}
-      
