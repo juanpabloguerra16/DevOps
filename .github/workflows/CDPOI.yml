@@ -24,11 +24,11 @@ jobs:
     - uses: actions/checkout@v3
     
     - name: ACR-Login
-    - uses: azure/docker-login@v1
+      uses: azure/docker-login@v1
       with:
         login-server: ${{ secrets.ACR_LOGIN_SERVER }}
         username: ${{ secrets.REGISTRY_USERNAME }}
         password: ${{ secrets.REGISTRY_PASSWORD }}
-      run: |
+    - run: |
         docker build . -t ${{ secrets.ACR_LOGIN_SERVER }}/devopsoh/api-poi:${{ github.sha }}
         docker push ${{ secrets.ACR_LOGIN_SERVER }}devopsoh/api-poi:${{ github.sha }}
