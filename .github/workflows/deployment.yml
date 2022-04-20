@@ -49,4 +49,4 @@ jobs:
         with: 
           templateFile: iac/bicep/main.bicep
           parameters: >
-          subscriptionid=${{ secrets.ARM_SUBSCRIPTION_ID }}
+            subscriptionid=${{ secrets.ARM_SUBSCRIPTION_ID }}
