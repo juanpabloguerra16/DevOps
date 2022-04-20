@@ -6,6 +6,11 @@ on:
   pull_request:
     paths:
       - 'apis/poi/**'
+      - '.github/workflows/CIPOI.yml'
+
+defaults:
+  run:
+    working-directory: "apis/poi"
 
   # Allows you to run this workflow manually from the Actions tab
 #   workflow_dispatch:
@@ -26,15 +31,45 @@ jobs:
         dotnet-version: 3.1.x
 
     - name: Restore dependencies
-      run: dotnet restore --source apis/poi/poi.sln
-
+      run: dotnet restore
 
     - name: Build
-      run: dotnet build --source apis/poi/poi.sln --no-restore --configuration Release
+      run: dotnet build --no-restore
+      
+    - name: Unit Test
+      run: dotnet test --filter "FullyQualifiedName~UnitTest" --logger "trx;LogFileName=UnitTestResults.trx" --results-directory ./TestResults
+      
+    - name: create an issue
+      if: failure()||success()
+      run: |
+         body='### Unit Test `failure`
+         <details>
+         <summary>Workflow details</summary>
+         Workflow name: `${{ github.workflow }}`
+         Action: `${{ github.event_name }}`
+         Job: `${{ github.job }}`
+         PR: #${{ github.event.number }}
+         </details>
+         Test details: [Run #${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+         Pusher: @${{ github.actor }}'
+         gh issue create --title ${{ github.event_name }} --body "${body}" --assignee ${{ github.actor }}
+      env:
+       GITHUB_TOKEN: ${{ secrets.GH_SECRET }}
 
-    - id: UnitTest
-        name: Integration Tests
-        run: |
-        $unitTestFilePath = "${{ env.RUNNER_TEMP }}\TestResults\unittests.trx"
-        dotnet test --filter "FullyQualifiedName~UnitTest" --logger "trx;LogFilePath=$unitTestFilePath" 
+    - name: create PR comment
+      if: failure()||success()
+      run: |
+         body='### Unit Test `failure`
+         <details>
+         <summary>Workflow details</summary>
+         Workflow name: `${{ github.workflow }}`
+         Action: `${{ github.event_name }}`
+         Job: `${{ github.job }}`
+         PR: #${{ github.event.number }}
+         </details>
+         Test details: [Run #${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+         Pusher: @${{ github.actor }}'
+         gh pr comment ${{ github.event.number }} --body "${body}" 
+      env:
+       GITHUB_TOKEN: ${{ secrets.GH_SECRET }}
 
