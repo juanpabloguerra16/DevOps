@@ -29,6 +29,6 @@ jobs:
         login-server: ${{ secrets.ACR_LOGIN_SERVER }}
         username: ${{ secrets.REGISTRY_USERNAME }}
         password: ${{ secrets.REGISTRY_PASSWORD }}
-    - run: |
+      run: |
         docker build . -t ${{ secrets.ACR_LOGIN_SERVER }}/devopsoh/api-poi:${{ github.sha }}
         docker push ${{ secrets.ACR_LOGIN_SERVER }}devopsoh/api-poi:${{ github.sha }}
