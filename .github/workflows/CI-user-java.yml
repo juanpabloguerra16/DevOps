@@ -34,7 +34,42 @@ jobs:
         distribution: 'adopt'
     - name: Build with Maven
       run: mvn package
+      
     - name: Unit Test
       run: mvn test
-    
+      
+    - name: create an issue
+      if: failure()||success()
+      run: |
+         body='### Unit Test `failure`
+         <details>
+         <summary>Workflow details</summary>
+         Workflow name: `${{ github.workflow }}`
+         Action: `${{ github.event_name }}`
+         Job: `${{ github.job }}`
+         PR: #${{ github.event.number }}
+         </details>
+         Test details: [Run #${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+         Pusher: @${{ github.actor }}'
+         gh issue create --title ${{ github.event_name }} --body "${body}" --assignee ${{ github.actor }}
+      env:
+       GITHUB_TOKEN: ${{ secrets.GH_SECRET }}
+
+    - name: create PR comment
+      if: failure()||success()
+      run: |
+         body='### Unit Test `failure`
+         <details>
+         <summary>Workflow details</summary>
+         Workflow name: `${{ github.workflow }}`
+         Action: `${{ github.event_name }}`
+         Job: `${{ github.job }}`
+         PR: #${{ github.event.number }}
+         </details>
+         Test details: [Run #${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+         Pusher: @${{ github.actor }}'
+         gh pr comment ${{ github.event.number }} --body "${body}" 
+      env:
+       GITHUB_TOKEN: ${{ secrets.GH_SECRET }}
+
     
