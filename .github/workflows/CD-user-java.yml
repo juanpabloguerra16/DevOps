@@ -1,0 +1,48 @@
+name: CDPOI
+
+# Controls when the workflow will run
+on:
+  push:
+    branches:
+      - user-java-dev
+    paths:
+      - 'apis/user-java/**'
+      - '.github/workflows/CD-user-java.yml'
+      
+defaults:
+  run:
+    working-directory: "apis/user-java"
+
+env:
+  RESOURCES_PREFIX: "team7"
+
+jobs:
+  Build-and-Push-Docker-Image: 
+    runs-on: ubuntu-latest
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: ACR-Login
+      uses: azure/docker-login@v1
+      with:
+        login-server: ${{ secrets.ACR_LOGIN_SERVER }}
+        username: ${{ secrets.REGISTRY_USERNAME }}
+        password: ${{ secrets.REGISTRY_PASSWORD }}
+    - run: |
+        docker build . -t ${{ secrets.ACR_LOGIN_SERVER }}/devopsoh/api-user-java:${{ github.run_attempt }}
+    - run: |
+        docker push ${{ secrets.ACR_LOGIN_SERVER }}/devopsoh/api-user-java:${{ github.run_attempt }}
+          
+    #Azure Login     
+    - name: Azure CLI Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+ 
+ # deploy container from ACR to App Service - staging slot     
+    - run: |
+        az webapp config container set --name team7userjava-staging \
+        --resource-group team7rg \
+        --docker-custom-image-name ${{ secrets.ACR_LOGIN_SERVER }}/devopsoh/api-user-java:${{ github.run_attempt }} \
+        --docker-registry-server-url ${{ secrets.ACR_LOGIN_SERVER }}
