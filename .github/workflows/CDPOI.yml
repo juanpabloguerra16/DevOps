@@ -16,7 +16,7 @@ env:
   RESOURCES_PREFIX: "team7"
 
 jobs:
-  Build and Push Docker Image: 
+  Build-and-Push-Docker-Image: 
     runs-on: ubuntu-latest
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
