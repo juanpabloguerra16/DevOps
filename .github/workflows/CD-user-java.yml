@@ -47,3 +47,14 @@ jobs:
         --docker-custom-image-name ${{ secrets.ACR_LOGIN_SERVER }}/devopsoh/api-user-java:${{ github.run_attempt }} \
         --docker-registry-server-url ${{ secrets.ACR_LOGIN_SERVER }} \
         --slot staging
+        
+    - name: Deploy to azure    
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: 'team7userjava'
+        slot-name: 'staging'
+        images: '${{ secrets.ACR_LOGIN_SERVER }}/devopsoh/api-user-java:${{ github.run_attempt }}'
+      
+    - name: Sign out of Azure
+      run: |
+        az logout
