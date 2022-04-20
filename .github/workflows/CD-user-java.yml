@@ -42,7 +42,8 @@ jobs:
  
  # deploy container from ACR to App Service - staging slot     
     - run: |
-        az webapp config container set --name team7userjava-staging \
+        az webapp config container set --name team7userjava \
         --resource-group team7rg \
         --docker-custom-image-name ${{ secrets.ACR_LOGIN_SERVER }}/devopsoh/api-user-java:${{ github.run_attempt }} \
-        --docker-registry-server-url ${{ secrets.ACR_LOGIN_SERVER }}
+        --docker-registry-server-url ${{ secrets.ACR_LOGIN_SERVER }} \
+        --slot staging
