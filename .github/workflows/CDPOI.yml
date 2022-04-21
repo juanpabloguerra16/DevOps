@@ -42,14 +42,19 @@ jobs:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
  
  # deploy container from ACR to App Service - staging slot     
-    - run: |
-        az webapp config container set \
-        --name team7poi \
-        --resource-group team7rg \
-        --docker-custom-image-name ${{ secrets.ACR_LOGIN_SERVER }}/devopsoh/api-poi:${{ github.run_id }} \
-        --docker-registry-server-url ${{ secrets.ACR_LOGIN_SERVER }} \
-        --slot staging
-        
+#    - run: |
+#        az webapp config container set \
+#        --name team7poi \
+#        --resource-group team7rg \
+#        --docker-custom-image-name ${{ secrets.ACR_LOGIN_SERVER }}/devopsoh/api-poi:${{ github.run_id }} \
+#        --docker-registry-server-url ${{ secrets.ACR_LOGIN_SERVER }} \
+#        --slot staging
+    - name: Deploy to azure    
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: 'team7poi'
+        slot-name: 'staging'
+        images: '${{ secrets.ACR_LOGIN_SERVER }}/devopsoh/api-poi:${{ github.run_id }}'        
 
     - id: healthcheck
       name: Check the deployed service URL
