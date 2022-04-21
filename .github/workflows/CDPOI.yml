@@ -49,6 +49,8 @@ jobs:
         --docker-custom-image-name ${{ secrets.ACR_LOGIN_SERVER }}/devopsoh/api-poi:${{ github.run_id }} \
         --docker-registry-server-url ${{ secrets.ACR_LOGIN_SERVER }} \
         --slot staging
+        
+
     - id: healthcheck
       name: Check the deployed service URL
       uses: jtalk/url-health-check-action@v2
@@ -56,7 +58,7 @@ jobs:
         # Check the following URLs one by one sequentially
         url: https://team7poi-staging.azurewebsites.net/api/healthcheck/poi
         # Follow redirects, or just report success on 3xx status codes
-        follow-redirect: false # Optional, defaults to "false"
+        follow-redirect: true # Optional, defaults to "false"
         # Fail this action after this many failed attempts
         max-attempts: 60 # Optional, defaults to 1
         # Delay between retries
