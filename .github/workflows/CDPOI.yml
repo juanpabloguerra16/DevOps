@@ -30,9 +30,9 @@ jobs:
         username: ${{ secrets.REGISTRY_USERNAME }}
         password: ${{ secrets.REGISTRY_PASSWORD }}
     - run: |
-        docker build . -t ${{ secrets.ACR_LOGIN_SERVER }}/devopsoh/api-poi:${{ github.sha }}
+        docker build . -t ${{ secrets.ACR_LOGIN_SERVER }}/devopsoh/api-poi:${{ github.run_id }}
     - run: |
-        docker push ${{ secrets.ACR_LOGIN_SERVER }}/devopsoh/api-poi:${{ github.sha }}
+        docker push ${{ secrets.ACR_LOGIN_SERVER }}/devopsoh/api-poi:${{ github.run_id }}
           
 
  # Azure Login     
@@ -46,7 +46,7 @@ jobs:
         az webapp config container set \
         --name team7poi \
         --resource-group team7rg \
-        --docker-custom-image-name ${{ secrets.ACR_LOGIN_SERVER }}/devopsoh/api-poi:${{ github.sha }} \
+        --docker-custom-image-name ${{ secrets.ACR_LOGIN_SERVER }}/devopsoh/api-poi:${{ github.run_id }} \
         --docker-registry-server-url ${{ secrets.ACR_LOGIN_SERVER }} \
         --slot staging
     - id: healthcheck
@@ -58,11 +58,11 @@ jobs:
         # Follow redirects, or just report success on 3xx status codes
         follow-redirect: false # Optional, defaults to "false"
         # Fail this action after this many failed attempts
-        max-attempts: 3 # Optional, defaults to 1
+        max-attempts: 60 # Optional, defaults to 1
         # Delay between retries
-        retry-delay: 5s # Optional, only applicable to max-attempts > 1
+        retry-delay: 10s # Optional, only applicable to max-attempts > 1
         # Retry all errors, including 404. This option might trigger curl upgrade.
-        retry-all: false # Optional, defaults to "false"
+        retry-all: true # Optional, defaults to "false"
         
     - name: autoswap
       run: |
