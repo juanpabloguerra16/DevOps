@@ -61,7 +61,7 @@ jobs:
       uses: jakejarvis/wait-action@v0.1.1
       with:
     # Follows the Linux sleep syntax for time units: a number followed by s for seconds, m for minutes, etc
-        time: 600
+        time: 60
     
     - id: healthcheck
       name: Check the deployed service URL
@@ -80,9 +80,9 @@ jobs:
         
     - name: autoswap
       run: |
-        az webapp deployment slot auto-swap \
+        az webapp deployment slot swap \
         --slot staging \
-        --auto-swap-slot production \
+        --target-slot production \
         --name team7poi \
         --resource-group team7rg \
 
