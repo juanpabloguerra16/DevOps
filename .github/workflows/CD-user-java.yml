@@ -60,7 +60,7 @@ jobs:
       uses: jtalk/url-health-check-action@v2
       with:
         # Check the following URLs one by one sequentially
-        url: https://team7poi-staging.azurewebsites.net/api/healthcheck/user-java
+        url: https://team7userjava-staging.azurewebsites.net/api/healthcheck/user-java
         # Follow redirects, or just report success on 3xx status codes
         follow-redirect: true # Optional, defaults to "false"
         # Fail this action after this many failed attempts
