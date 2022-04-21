@@ -45,19 +45,19 @@ jobs:
         # The script to run
         script: |
           github.rest.issues.create({
-          'DevOpsOpenHack',
-          'devopsohdevops-oh-team07-april2022',
-          '${{ github.event_name }}',
-          '### Unit Test `failure` \
-           <details>
-           <summary>Workflow details</summary>
-           Workflow name: `${{ github.workflow }}`
-           Action: `${{ github.event_name }}`
-           Job: `${{ github.job }}`
-           PR: #${{ github.event.number }}
-           </details>
-           Test details: [Run #${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
-           Pusher: @${{ github.actor }}'
+            owner: 'DevOpsOpenHack',
+            repo: 'devopsohdevops-oh-team07-april2022',
+            title: '${{ github.event_name }}',
+            body: '### Unit Test `failure` 
+               <details>
+               <summary>Workflow details</summary>
+               Workflow name: `${{ github.workflow }}`
+               Action: `${{ github.event_name }}`
+               Job: `${{ github.job }}`
+               PR: #${{ github.event.number }}
+               </details>
+               Test details: [Run #${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+               Pusher: @${{ github.actor }}'
           });
         # The GitHub token used to create an authenticated client
         github-token: ${{ github.token }}
