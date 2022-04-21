@@ -30,7 +30,7 @@ jobs:
         username: ${{ secrets.REGISTRY_USERNAME }}
         password: ${{ secrets.REGISTRY_PASSWORD }}
     - run: |
-        docker build . -t ${{ secrets.ACR_LOGIN_SERVER }}/devopsoh/api-poi:${{ github.run_id }}
+        docker build . -t ${{ secrets.ACR_LOGIN_SERVER }}/devopsoh/api-poi:${{ github.run_id }} --build-arg build_version=${{ github.run_id }}
     - run: |
         docker push ${{ secrets.ACR_LOGIN_SERVER }}/devopsoh/api-poi:${{ github.run_id }}
           
