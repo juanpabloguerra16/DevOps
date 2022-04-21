@@ -47,5 +47,5 @@ jobs:
         --name team7poi \
         --resource-group team7rg \
         --docker-custom-image-name ${{ secrets.ACR_LOGIN_SERVER }}/devopsoh/api-poi:${{ github.sha }} \
-        --docker-registry-server-url ${{ secrets.ACR_LOGIN_SERVER }}
+        --docker-registry-server-url ${{ secrets.ACR_LOGIN_SERVER }} \
         --slot staging
