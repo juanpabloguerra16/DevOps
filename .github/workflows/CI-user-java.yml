@@ -38,23 +38,30 @@ jobs:
     - name: Unit Test
       run: mvn test
       
-    - name: create an issue
+    - name: GitHub Script - create issue
       if: failure()||success()
-      run: |
-         body='### Unit Test `failure`
-         <details>
-         <summary>Workflow details</summary>
-         Workflow name: `${{ github.workflow }}`
-         Action: `${{ github.event_name }}`
-         Job: `${{ github.job }}`
-         PR: #${{ github.event.number }}
-         </details>
-         Test details: [Run #${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
-         Pusher: @${{ github.actor }}'
-         gh issue create --title ${{ github.event_name }} --body "${body}" --assignee ${{ github.actor }}
-      env:
-       GITHUB_TOKEN: ${{ secrets.GH_SECRET }}
-
+      uses: actions/github-script@v6.0.0
+      with:
+        # The script to run
+        script: |
+          github.rest.issues.create({
+          'DevOpsOpenHack',
+          'devopsohdevops-oh-team07-april2022',
+          '${{ github.event_name }}',
+          '### Unit Test `failure` \
+           <details>
+           <summary>Workflow details</summary>
+           Workflow name: `${{ github.workflow }}`
+           Action: `${{ github.event_name }}`
+           Job: `${{ github.job }}`
+           PR: #${{ github.event.number }}
+           </details>
+           Test details: [Run #${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+           Pusher: @${{ github.actor }}'
+          });
+        # The GitHub token used to create an authenticated client
+        github-token: ${{ github.token }}
+    
     - name: create PR comment
       if: failure()||success()
       run: |
