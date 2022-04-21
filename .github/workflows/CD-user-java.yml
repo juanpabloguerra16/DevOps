@@ -1,10 +1,10 @@
-name: CDPOI
+name: CD-user-java
 
 # Controls when the workflow will run
 on:
   push:
     branches:
-      - user-java-dev
+      - main
     paths:
       - 'apis/user-java/**'
       - '.github/workflows/CD-user-java.yml'
@@ -30,9 +30,9 @@ jobs:
         username: ${{ secrets.REGISTRY_USERNAME }}
         password: ${{ secrets.REGISTRY_PASSWORD }}
     - run: |
-        docker build . -t ${{ secrets.ACR_LOGIN_SERVER }}/devopsoh/api-user-java:${{ github.run_attempt }}
+        docker build . -t ${{ secrets.ACR_LOGIN_SERVER }}/devopsoh/api-user-java:${{ github.run_id }} --build-arg build_version=${{ github.run_id }}
     - run: |
-        docker push ${{ secrets.ACR_LOGIN_SERVER }}/devopsoh/api-user-java:${{ github.run_attempt }}
+        docker push ${{ secrets.ACR_LOGIN_SERVER }}/devopsoh/api-user-java:${{ github.run_id }}
           
     #Azure Login     
     - name: Azure CLI Login
@@ -44,7 +44,7 @@ jobs:
     - run: |
         az webapp config container set --name team7userjava \
         --resource-group team7rg \
-        --docker-custom-image-name ${{ secrets.ACR_LOGIN_SERVER }}/devopsoh/api-user-java:${{ github.run_attempt }} \
+        --docker-custom-image-name ${{ secrets.ACR_LOGIN_SERVER }}/devopsoh/api-user-java:${{ github.run_id }} \
         --docker-registry-server-url ${{ secrets.ACR_LOGIN_SERVER }} \
         --slot staging
         
@@ -53,8 +53,31 @@ jobs:
       with:
         app-name: 'team7userjava'
         slot-name: 'staging'
-        images: '${{ secrets.ACR_LOGIN_SERVER }}/devopsoh/api-user-java:${{ github.run_attempt }}'
-      
+        images: '${{ secrets.ACR_LOGIN_SERVER }}/devopsoh/api-user-java:${{ github.run_id }}'
+
+    - id: healthcheck
+      name: Check the deployed service URL
+      uses: jtalk/url-health-check-action@v2
+      with:
+        # Check the following URLs one by one sequentially
+        url: https://team7poi-staging.azurewebsites.net/api/healthcheck/user-java
+        # Follow redirects, or just report success on 3xx status codes
+        follow-redirect: true # Optional, defaults to "false"
+        # Fail this action after this many failed attempts
+        max-attempts: 60 # Optional, defaults to 1
+        # Delay between retries
+        retry-delay: 10s # Optional, only applicable to max-attempts > 1
+        # Retry all errors, including 404. This option might trigger curl upgrade.
+        retry-all: true # Optional, defaults to "false"
+        
+    - name: swap slots
+      run: |
+        az webapp deployment slot swap \
+        --slot staging \
+        --target-slot production \
+        --name team7userjava \
+        --resource-group team7rg \
+
     - name: Sign out of Azure
       run: |
         az logout
